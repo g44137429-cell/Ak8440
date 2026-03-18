@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AK8440 Pro Crash Game</title>
+<style>
+body{margin:0;font-family:Arial;background:#0b0b0b;color:white;text-align:center}
+.header{background:#e11d2e;padding:15px}
+.container{padding:20px}
+input{padding:10px;margin:5px;border-radius:6px;border:none}
+.btn{padding:10px 15px;margin:5px;border:none;border-radius:6px;font-size:16px}
+.green{background:green;color:white}
+.orange{background:orange;color:white}
+.multiplier{font-size:40px;color:#00ff99;margin:20px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h2>AK8440 Pro Crash Game</h2>
+</div>
+
+<div id="auth" class="container">
+<h3>Login / Signup</h3>
+<input id="user" placeholder="Username"><br>
+<input id="pass" placeholder="Password" type="password"><br>
+<button class="btn green" onclick="login()">Login</button>
+</div>
+
+<div id="game" class="container hidden">
+<h3>Welcome <span id="username"></span></h3>
+<div>Balance: <span id="balance">1000</span></div>
+
+<div class="multiplier" id="multi">1.00x</div>
+
+<button class="btn green" onclick="start()">Start</button>
+<button class="btn orange" onclick="cashout()">Cashout</button>
+
+<h3>Leaderboard</h3>
+<ul id="leader"></ul>
+
+<h3>VIP Access</h3>
+<button class="btn green">Upgrade VIP</button>
+
+</div>
+
+<script>
+let balance=1000;
+let running=false;
+let multi=1;
+let interval;
+
+function login(){
+ let u=document.getElementById("user").value;
+ if(u==="") return alert("Enter username");
+ document.getElementById("auth").classList.add("hidden");
+ document.getElementById("game").classList.remove("hidden");
+ document.getElementById("username").innerText=u;
+}
+
+function start(){
+ if(running) return;
+ running=true;
+ multi=1;
+ interval=setInterval(()=>{
+  multi+=Math.random()*0.2;
+  document.getElementById("multi").innerText=multi.toFixed(2)+"x";
+
+  if(Math.random()<0.05){
+   clearInterval(interval);
+   running=false;
+   document.getElementById("multi").innerText="CRASH!";
+  }
+ },200);
+}
+
+function cashout(){
+ if(!running) return;
+ balance += Math.floor(multi*10);
+ document.getElementById("balance").innerText=balance;
+ updateLeader();
+ clearInterval(interval);
+ running=false;
+ document.getElementById("multi").innerText="Cashed!";
+}
+
+function updateLeader(){
+ let li=document.createElement("li");
+ li.innerText="Player: +" + Math.floor(multi*10);
+ document.getElementById("leader").appendChild(li);
+}
+</script>
+
+</body>
+</html>
